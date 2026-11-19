@@ -1,21 +1,28 @@
-# The Neighborhood Tradeoff
+The Neighborhood Tradeoff
+An interactive Bay Area livability explorer | UC Berkeley DATA 209
 
-## Deploy through Vercel
+Live website: https://bay-area-livability.vercel.app/
+Overview
+How does the cost of renting relate to the amenities available in a neighborhood? The Neighborhood Tradeoff invites visitors to explore Bay Area ZIP codes and compare monthly rent, rent changes, and access to everyday amenities. Rather than showing four disconnected charts, the experience connects geography, neighborhood details, and comparisons in one interactive story.
 
-1. Sign in at https://vercel.com/ and choose **Add New → Project**.
-2. Import the new GitHub repository.
-3. Choose **Other** as the Framework Preset if asked; leave build command empty and set output directory to `.` if Vercel asks for one.
-4. Deploy, and open the generated `*.vercel.app` link.
-5. Any future GitHub commits should trigger a new Vercel deployment.
-
-## Test before recruiting participants
-
-- Check the map tiles and ZIP borders align while zooming and panning.
-- Confirm selecting a ZIP updates snapshot, scatterplot, and historical rent trend.
-- Confirm county filter, opacity slider, reset map, and narrow viewport work.
-- Test in an incognito/private window and on a second browser.
-- If a CSV/GeoJSON is missing, the site shows an explicit error message with the missing path.
-
-## Implementation note
-
-The webpage uses JavaScript ES modules loaded from jsDelivr, and map imagery from OpenStreetMap. A network connection is needed for those resources. The data files are served directly as static assets and should not contain private information. No server-side API or Flask is used.
+This is an exploratory visualization, not a neighborhood recommendation engine. Associations in these data do not show that amenities cause rents to rise.
+Explore the visualization
+1. Explore the map. Zoom or pan across the Bay Area. ZIP-code colors indicate the change in average monthly rent from 2022 to 2026; change the ZIP color intensity slider to see the underlying OpenStreetMap labels.
+2. Focus your comparison. Zooming the map updates the set of ZIP codes shown in the rent-versus-amenities scatterplot and regional summary statistics. You can also choose a county.
+3. Choose a neighborhood. Click a ZIP on the map, click a point in the scatterplot, or enter a ZIP code in the search field. The neighborhood snapshot shows its current monthly rent, rent change, and relative access to six amenity categories: transit, groceries, food and drink, healthcare, education, and recreation.
+4. Put the price in context. Use the scatterplot to compare monthly rent against amenities per square mile for ZIP codes in the current map view. The dotted line is a fitted linear trend, not a causal estimate.
+5. Explore rent history. The supporting historical chart compares average monthly rent for ZIP codes in low-, medium-, and high-transit-density groups from January 2024 through August 2026. When a ZIP is selected, its history is shown alongside those groups.
+Use Clear selection to remove the chosen ZIP, or Reset map to restore the full geographic view. Note that the map's 2022–2026 change period and the history chart's 2024–2026 window are different.
+How the views connect
+- Map navigation changes the comparison group: ZIPs are included if their geographic centroid falls inside the visible map viewport.
+- County filtering restricts the active ZIP codes.
+- ZIP selection highlights one neighborhood across the map, profile, scatterplot, and rent-history chart.
+- Amenity profile bars are percentile ranks across the full dataset, not measures of walkability, quality, or distance to individual destinations.
+- Transit categories are thirds of eligible ZIP codes ranked by transit stops per square mile, defined using the full dataset. The categories remain fixed when the geographic comparison group changes.
+Some ZIP codes or values may be missing, and the different source tables may cover different sets of ZIP codes.
+Project team
+UC Berkeley School of Information — DATA 209
+- Eve — ZIP-code geographic rent-change visualization and basemap
+- Molly Jenkins — rent history grouped by transit access
+- Mackenzie Henderson — rent-versus-amenities analysis, neighborhood amenity exploration, and integrated web experience
+The interactive site combines and adapts these views for a shared usability-testing experience.
