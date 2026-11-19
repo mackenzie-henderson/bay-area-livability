@@ -1,5 +1,3 @@
-// THE NEIGHBORHOOD TRADEOFF — Observable (new notebook editor)
-// Put this ENTIRE code into one JavaScript cell. Upload the three files first.
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import {tile as d3tile} from "https://cdn.jsdelivr.net/npm/d3-tile@1/+esm";
 
@@ -14,7 +12,7 @@ async function loadJSON(path) { return JSON.parse(await loadText(path)); }
 
 try {
 const neighborhoodDashboard = await (async () => {
-  const [main, geo, eve] = await Promise.all([
+  const [main, geo, coordinates] = await Promise.all([
     loadCSV("./data/bay_area_livability_by_zip.csv"),
     loadJSON("./data/bay_area_livability_by_zip.geojson"),
     loadCSV("./data/bay_area_livability_by_zip_with_rough_coords.csv")
@@ -42,13 +40,13 @@ const neighborhoodDashboard = await (async () => {
     {key:"Education_Per_Sq_Mile", label:"Education"},
     {key:"Recreation_Per_Sq_Mile", label:"Recreation"}
   ];
-  const eveByZip = new Map(eve.map(d => [zipKey(d.ZIP ?? d.RegionName), d]));
+  const coordsByZip = new Map(coordinates.map(d => [zipKey(d.ZIP ?? d.RegionName), d]));
   const dates = Object.keys(main[0] ?? {}).filter(k => /^\d{4}-\d{2}-\d{2}$/.test(k) && k >= "2024-01-31" && k <= "2026-08-31").sort();
   const parsedDates = dates.map(d => new Date(d + "T00:00:00"));
 
   const rows = main.map(d => {
     const zip = zipKey(d.ZIP ?? d.RegionName);
-    const er = eveByZip.get(zip) ?? {};
+    const er = coordsByZip.get(zip) ?? {};
     const startRent = firstNumeric(er, ["AvgRent2022","Avg_Rent_2022","Rent2022"])
       ?? firstNumeric(d, ["AvgRent2022","Avg_Rent_2022","Rent2022"]);
     const endRent = firstNumeric(er, ["AvgRent2026","Avg_Rent_2026","Rent2026"])
@@ -70,7 +68,7 @@ const neighborhoodDashboard = await (async () => {
     };
   }).filter(d => d.zip);
   const byZip = new Map(rows.map(d => [d.zip, d]));
-  // Match Molly's method: split ZIPs with valid endpoint rents and transit data into thirds.
+  // Split ZIPs with valid endpoint rents and transit data into thirds.
   const transitEligible = rows.filter(d => d.transit !== null && Number.isFinite(d.transit) && d.history[0] > 0 && d.history.at(-1) > 0)
     .sort((a,b) => d3.ascending(a.transit,b.transit));
   const groupNames = ["Low transit", "Medium transit", "High transit"];
@@ -127,7 +125,7 @@ const neighborhoodDashboard = await (async () => {
   const mapViewport=mapCard.append("div").attr("class","map-frame");
   const mapLegend=mapCard.append("div").attr("class","ramp-row");mapLegend.append("span").text("Fell");mapLegend.append("div").attr("class","ramp");mapLegend.append("span").text("Rose");
   mapCard.append("div").attr("class","meta").style("text-align","center").style("margin-top","6px").text(`Rent change scale centered on $0 · ±${money(maxAbsChange)}/mo`);
-  // Eve's transparent ZIP overlay: adjust how clearly the basemap shows through.
+  // Transparent ZIP overlay: adjust how clearly the basemap shows through.
   const overlayControl=mapCard.append("div").attr("class","overlay-controls");
   overlayControl.append("label").attr("for","nt-overlay-opacity").text("ZIP color intensity");
   const opacitySlider=overlayControl.append("input").attr("id","nt-overlay-opacity")
@@ -160,7 +158,7 @@ const neighborhoodDashboard = await (async () => {
   const bottom=root.append("section").attr("class","bottom");
   bottom.append("div").attr("class","eyebrow").text("THE BIGGER PICTURE");
   bottom.append("h3").style("margin-top","7px").text("Has the cost of convenience changed over time?");
-  bottom.append("p").text("Molly's transit-access comparison adds historical context. The selected ZIP appears as a purple dashed line, compared with the transit-access groups in your current map view.");
+  bottom.append("p").text("Compare historical monthly rent across low-, medium-, and high-transit-access ZIP codes in the current map view. A purple dashed line shows the selected ZIP.");
   const bottomGrid=bottom.append("div").attr("class","bottom-grid").style("margin-top","14px");
   const lineCard=bottomGrid.append("div").attr("class","card");
   lineCard.append("div").attr("class","card-title").text("Rent trends · 2024–2026");
@@ -172,7 +170,7 @@ const neighborhoodDashboard = await (async () => {
   const contextA=contextStats.append("div").attr("class","stat");const contextB=contextStats.append("div").attr("class","stat");
   contextCard.append("p").style("margin-top","13px").text("Compare neighborhoods with similar amenities, then inspect the difference in rent. Density is measured per square mile, and these observational patterns do not show that amenities cause rent changes.");
   const details=root.append("details");details.append("summary").text("About the data and measures");
-  details.append("p").style("margin-top","9px").text("Map: 2026 minus 2022 average rent using Eve's coordinates dataset; scatter: Current_ZORI vs Amenities_Per_Sq_Mile; profiles: percentile density across the full dataset; historical chart: Molly's low/medium/high transit terciles based on ZIPs with complete endpoints and transit density. Date windows differ across the charts. ZIPs enter map-filtered views if their geographic centroid is visible. Observational associations are not causal.");
+  details.append("p").style("margin-top","9px").text("Map: 2026 minus 2022 average rent using the supplementary coordinates dataset; scatter: Current_ZORI vs Amenities_Per_Sq_Mile; profiles: percentile density across the full dataset; historical chart: low/medium/high transit terciles based on ZIPs with complete endpoints and transit density. Date windows differ across the charts. ZIPs enter map-filtered views if their geographic centroid is visible. Observational associations are not causal.");
   const tooltip=mapViewport.append("div").attr("class","tooltip");
 
   let county="All",selectedZip=null,mapTransform=d3.zoomIdentity,geoFiltered=false;
