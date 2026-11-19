@@ -1,24 +1,4 @@
-# The Neighborhood Tradeoff — Vercel static site
-
-This is the **Eve-updated Neighborhood Tradeoff** dashboard converted from Observable to a standalone static webpage. **No Flask or build step is required.**
-
-## Required: add real datasets
-
-The site will show an explicit loading error until you copy the following files from your Observable notebook into the `data/` directory. Filenames must match **exactly**:
-
-- `data/bay_area_livability_by_zip.csv`
-- `data/bay_area_livability_by_zip.geojson`
-- `data/bay_area_livability_by_zip_with_rough_coords.csv`
-
-These datasets are not included in the ZIP because they were not uploaded to this conversation. The `.gitkeep` file in `data/` is just a placeholder.
-
-## Upload to GitHub
-
-1. Unzip the package.
-2. Add the three data files to the `data` folder.
-3. Create a **new GitHub repository** (e.g. `bay-area-livability`).
-4. Upload `index.html`, `app.js`, and the complete `data/` folder **to the repository root** (not another nested folder).
-5. Commit the files.
+# The Neighborhood Tradeoff
 
 ## Deploy through Vercel
 
