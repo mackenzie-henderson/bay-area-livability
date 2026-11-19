@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Explore how monthly rent and everyday amenity access vary across Bay Area ZIP codes." />
+  <title>The Neighborhood Tradeoff — Bay Area Livability Explorer</title>
+  <style>
+    body { margin:0; background:#faf9fc; color:#262637; font-family:Inter,system-ui,-apple-system,Arial,sans-serif; }
+    main { padding: clamp(12px,3vw,38px); }
+    #load-status { max-width:1100px; margin:40px auto; padding:20px; border:1px solid #e5d9ef; border-radius:14px; background:white; color:#5e468c; line-height:1.5; }
+    footer { max-width:1140px; margin:0 auto; padding:0 14px 28px; color:#6b7286; font-size:12px; }
+    footer a { color:#5e468c; }
+  </style>
+</head>
+<body>
+  <main>
+    <div id="load-status" role="status">Loading the interactive Bay Area explorer…</div>
+    <div id="dashboard-root"></div>
+  </main>
+  <footer>Bay Area Livability Explorer · UC Berkeley DATA 209 project · Basemap © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a></footer>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
