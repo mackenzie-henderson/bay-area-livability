@@ -72,7 +72,7 @@ const neighborhoodDashboard = await (async () => {
   const transitEligible = rows.filter(d => d.transit !== null && Number.isFinite(d.transit) && d.history[0] > 0 && d.history.at(-1) > 0)
     .sort((a,b) => d3.ascending(a.transit,b.transit));
   const groupNames = ["Low transit", "Medium transit", "High transit"];
-  const groupColor = new Map([["Low transit", "#4e79a7"],["Medium transit", "#f28e2b"],["High transit", "#59a14f"]]);
+  const groupColor = new Map([["Low transit", "#8d579e"],["Medium transit", "#a59aab"],["High transit", "#3b956c"]]);
   transitEligible.forEach((d,i) => d.transitGroup = groupNames[Math.min(2,Math.floor(i * 3 / transitEligible.length))]);
   for (const key of [...metrics.map(m => m.key), "rent"]) {
     const accessor = d => key === "rent" ? d.rent : d.values[key];
@@ -105,7 +105,34 @@ const neighborhoodDashboard = await (async () => {
   .nt-dashboard .hint{margin-top:12px;font-size:12px;color:var(--muted);line-height:1.5}.nt-dashboard .snapshot-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.nt-dashboard .chip{font-size:10px;color:#6f579a;background:#f3edfa;padding:5px 7px;border-radius:20px;white-space:nowrap}.nt-dashboard .snapshot-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:13px 0 15px}.nt-dashboard .metric-box{background:#f9f7fc;padding:11px;border-radius:10px}.nt-dashboard .metric-box b{font-size:21px;letter-spacing:-.5px;display:block}.nt-dashboard .metric-box span{font-size:11px;color:var(--muted)}
   .nt-dashboard .profile-row{display:grid;grid-template-columns:92px minmax(0,1fr) 37px;align-items:center;gap:8px;margin:9px 0;font-size:11px}.nt-dashboard .track{height:9px;border-radius:12px;background:#eeeaf4;overflow:hidden}.nt-dashboard .fill{height:100%;background:#8263b9;border-radius:12px}.nt-dashboard .muted{color:var(--muted)}.nt-dashboard .chart-svg{display:block;width:100%;height:auto;max-width:100%}.nt-dashboard .axis text{fill:#757488;font-size:10px}.nt-dashboard .axis path,.nt-dashboard .axis line{stroke:#d7d7df}.nt-dashboard .chart-note{font-size:11px;color:var(--muted);margin-top:7px}.nt-dashboard .chart-key{font-size:11px;color:var(--muted);display:flex;flex-wrap:wrap;gap:9px;margin-top:6px}.nt-dashboard .key-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}
   .nt-dashboard .bottom{margin-top:18px;border-top:1px solid var(--line);padding:20px 0 3px}.nt-dashboard .bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}.nt-dashboard .fineprint{font-size:11px;color:var(--muted);line-height:1.65;margin-top:14px}.nt-dashboard details{margin-top:17px;font-size:12px;color:var(--muted)}.nt-dashboard summary{cursor:pointer;color:#65527f;font-weight:700}
-  @media(max-width:830px){.nt-dashboard .main-grid,.nt-dashboard .bottom-grid{grid-template-columns:1fr}.nt-dashboard .intro{padding-left:5px}.nt-dashboard .snapshot-metrics{grid-template-columns:1fr 1fr}}
+  /* Unified map-first view: area context and selected ZIP stay visible together. */
+  .nt-dashboard{--ink:#282638;--muted:#67647b;--lav:#7b468f;--line:#e5e2e9}
+  .nt-dashboard .eyebrow{color:#793e83}
+  .nt-dashboard .main-grid{grid-template-columns:minmax(0,1.03fr) minmax(0,1fr);gap:16px}
+  .nt-dashboard .side-top{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,.85fr);gap:12px;align-items:stretch}
+  .nt-dashboard .side-top .card{padding:16px}
+  .nt-dashboard .side-top .snapshot-metrics{grid-template-columns:1fr 1fr;gap:7px}
+  .nt-dashboard .side-top .metric-box{padding:8px}
+  .nt-dashboard .side-top .metric-box b{font-size:17px}
+  .nt-dashboard .side-top .metric-box span{font-size:10px}
+  .nt-dashboard .side-top .profile-row{grid-template-columns:67px minmax(0,1fr) 34px;gap:5px;margin:7px 0;font-size:10px}
+  .nt-dashboard .area-stats{display:flex;flex-direction:column;gap:10px;margin-top:13px}
+  .nt-dashboard .area-stat{background:#f7f5fa;border-radius:11px;padding:12px}
+  .nt-dashboard .area-stat b{display:block;font-size:25px;line-height:1.1;font-variant-numeric:tabular-nums;color:#3f2b4d}
+  .nt-dashboard .area-stat span{display:block;font-size:10px;line-height:1.4;color:var(--muted);margin-top:5px}
+  .nt-dashboard .area-label{font-size:12px;line-height:1.4;color:var(--muted);margin-top:8px}
+  .nt-dashboard .city-label{font-size:15px;font-weight:800;fill:#222735;stroke:#fff;stroke-width:4px;stroke-linejoin:round;paint-order:stroke;pointer-events:none;letter-spacing:.15px}
+  .nt-dashboard .zip-shape{transition:fill-opacity 90ms ease}
+  .nt-dashboard .map-frame .zip-shape{stroke:#454354;stroke-width:.45}
+  .nt-dashboard .ramp{background:linear-gradient(90deg,#762a83,#c2a2c7,#f7f7f7,#9acb98,#1b7837)}
+  .nt-dashboard .fill{background:#7b468f}
+  .nt-dashboard .scatter-tooltip{position:absolute;z-index:10;pointer-events:none;display:none;max-width:245px;background:#282334;color:white;font-size:11px;line-height:1.55;border-radius:8px;padding:9px 11px;box-shadow:0 7px 22px #0003}
+  .nt-dashboard .chart-holder{position:relative}
+  .nt-dashboard .map-tiles{opacity:.55;filter:saturate(.55) contrast(.94)}
+  .nt-dashboard button.reset-area{background:transparent;border:1px solid #d5c4db;color:#7b468f}
+  @media(max-width:1050px){.nt-dashboard .side-top{grid-template-columns:1fr}.nt-dashboard .area-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.nt-dashboard .area-stat{padding:9px}.nt-dashboard .area-stat b{font-size:20px}}
+  @media(max-width:830px){.nt-dashboard .main-grid,.nt-dashboard .bottom-grid{grid-template-columns:1fr}.nt-dashboard .intro{padding-left:5px}.nt-dashboard .snapshot-metrics{grid-template-columns:1fr 1fr}.nt-dashboard .side-top{grid-template-columns:1fr 1fr}.nt-dashboard .area-stats{display:flex}}
+  @media(max-width:560px){.nt-dashboard .side-top{grid-template-columns:1fr}.nt-dashboard .area-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}}
   `);
   const intro=root.append("div").attr("class","intro");
   intro.append("div").attr("class","eyebrow").text("BAY AREA LIVABILITY EXPLORER");
@@ -116,30 +143,32 @@ const neighborhoodDashboard = await (async () => {
   const countySelect=countyControl.append("select");countySelect.selectAll("option").data(["All",...counties]).join("option").attr("value",d=>d).text(d=>d==="All"?"All Bay Area counties":d+" County");
   const searchControl=toolbar.append("div");searchControl.append("label").text("Look up a ZIP");
   const zipInput=searchControl.append("input").attr("type","search").attr("placeholder","e.g. 94110").attr("maxlength",5).attr("size",11);
-  const clearBtn=toolbar.append("button").text("Clear selection");
+  const clearBtn=toolbar.append("button").text("Clear ZIP");
+  const resetFilters=toolbar.append("button").attr("class","reset-area").text("↺ Show entire Bay Area");
   const mainGrid=root.append("div").attr("class","main-grid");
   const mapSide=mainGrid.append("div").attr("class","map-side");
   const mapCard=mapSide.append("section").attr("class","card");
   mapCard.append("div").attr("class","card-title").text("Explore the Bay Area");
-  mapCard.append("p").text("ZIP colors show change in monthly rent from 2022 to 2026, over OpenStreetMap. Adjust transparency to see place names; zoom to filter the comparison.");
+  mapCard.append("p").text("Rent change from 2022–2026. Zoom or pan to update the comparison; click a ZIP to inspect it. City names stay visible above the colors.");
   const mapViewport=mapCard.append("div").attr("class","map-frame");
   const mapLegend=mapCard.append("div").attr("class","ramp-row");mapLegend.append("span").text("Fell");mapLegend.append("div").attr("class","ramp");mapLegend.append("span").text("Rose");
-  mapCard.append("div").attr("class","meta").style("text-align","center").style("margin-top","6px").text(`Rent change scale centered on $0 · ±${money(maxAbsChange)}/mo`);
+  mapCard.append("div").attr("class","meta").style("text-align","center").style("margin-top","6px").text(`Rent change scale centered on $0 · ±${money(maxAbsChange)}/mo · gray = unavailable`);
   // Transparent ZIP overlay: adjust how clearly the basemap shows through.
   const overlayControl=mapCard.append("div").attr("class","overlay-controls");
   overlayControl.append("label").attr("for","nt-overlay-opacity").text("ZIP color intensity");
   const opacitySlider=overlayControl.append("input").attr("id","nt-overlay-opacity")
-    .attr("type","range").attr("min",0.15).attr("max",0.95).attr("step",0.05).property("value",0.72);
-  const opacityLabel=overlayControl.append("span").text("72%");
-  let overlayOpacity=0.72;
+    .attr("type","range").attr("min",0.15).attr("max",0.95).attr("step",0.05).property("value",0.58);
+  const opacityLabel=overlayControl.append("span").text("58%");
+  let overlayOpacity=0.58;
 
   const mapBtns=mapCard.append("div").style("display","flex").style("gap","8px").style("margin-top","11px");
   const mapReset=mapBtns.append("button").text("↺ Reset map");
-  const mapInfo=mapCard.append("div").attr("class","summary-strip");
-  const countStat=mapInfo.append("div").attr("class","stat");const rentStat=mapInfo.append("div").attr("class","stat");
+  // Area-wide stats now sit BESIDE the selected-neighborhood snapshot.  
+  const countStatPlaceholder = null;
   mapCard.append("div").attr("class","hint").text("The analysis follows the ZIP-code centroids inside the current map view. Zoom or pan to compare a smaller area.");
   const side=mainGrid.append("div").attr("class","side");
-  const snapshot=side.append("section").attr("class","card");
+  const sideTop=side.append("div").attr("class","side-top");
+  const snapshot=sideTop.append("section").attr("class","card");
   const snapshotTitle=snapshot.append("div").attr("class","snapshot-head");
   const nameBlock=snapshotTitle.append("div");nameBlock.append("div").attr("class","eyebrow").text("NEIGHBORHOOD SNAPSHOT");
   const nameTitle=nameBlock.append("h3").style("margin-top","7px");
@@ -150,10 +179,20 @@ const neighborhoodDashboard = await (async () => {
   snapshot.append("div").style("font-size","12px").style("font-weight","750").text("Everyday amenity access");
   const profile=snapshot.append("div");
   snapshot.append("p").style("font-size","11px").style("margin-top","9px").text("Bars show each ZIP's relative percentile among all ZIPs in this dataset, not walking distance or quality.");
+  const areaCard=sideTop.append("section").attr("class","card");
+  areaCard.append("div").attr("class","eyebrow").text("CURRENT MAP AREA");
+  areaCard.append("h3").style("margin-top","7px").text("Area at a glance");
+  const areaLabel=areaCard.append("p").attr("class","area-label");
+  const areaStats=areaCard.append("div").attr("class","area-stats");
+  const countStat=areaStats.append("div").attr("class","area-stat");
+  const rentStat=areaStats.append("div").attr("class","area-stat");
+  const amenityStat=areaStats.append("div").attr("class","area-stat");
   const compare=side.append("section").attr("class","card");
   compare.append("div").attr("class","card-title").text("What does convenience cost here?");
   compare.append("p").text("Each dot is a ZIP in the map view. Find the selected neighborhood among nearby rent and amenity combinations.");
-  const scatterBox=compare.append("div");
+  const scatterHolder=compare.append("div").attr("class","chart-holder");
+  const scatterBox=scatterHolder.append("div");
+  const scatterTip=scatterHolder.append("div").attr("class","scatter-tooltip").attr("role","tooltip");
   const scatterNote=compare.append("div").attr("class","chart-note");
   const bottom=root.append("section").attr("class","bottom");
   bottom.append("div").attr("class","eyebrow").text("THE BIGGER PICTURE");
@@ -177,9 +216,27 @@ const neighborhoodDashboard = await (async () => {
   let geographicVisible=new Set(rows.map(d=>d.zip));
   const visible=()=>rows.filter(d=>(county==="All"||d.county===county)&&geographicVisible.has(d.zip));
   function choose(zip){selectedZip=zip&&byZip.has(zip)?zip:null;zipInput.property("value",selectedZip||"");renderAll();}
-  countySelect.on("change",()=>{county=countySelect.property("value");if(selectedZip&&!visible().some(d=>d.zip===selectedZip))selectedZip=null;renderAll();});
+  // Returning to "All" also resets the map so there is no lingering geographic crop.
+  countySelect.on("change",()=>{
+    county=countySelect.property("value");
+    if(county==="All") {
+      selectedZip=null;zipInput.property("value","");
+      mapSvg.interrupt().call(zoom.transform,d3.zoomIdentity);
+    } else {
+      if(selectedZip&&!rows.some(d=>d.zip===selectedZip&&d.county===county)) {selectedZip=null;zipInput.property("value","");}
+      renderAll();
+    }
+  });
   zipInput.on("change",()=>{const z=zipKey(zipInput.property("value"));const found=byZip.get(z);if(!found){selectedSummary.text(`ZIP ${z} isn't in the dataset.`);return;}if(county!=="All"&&found.county!==county){county="All";countySelect.property("value","All");}choose(z);});
   clearBtn.on("click",()=>choose(null));
+  function resetArea(){
+    county="All"; countySelect.property("value","All");
+    selectedZip=null;zipInput.property("value","");
+    mapSvg.interrupt().call(zoom.transform,d3.zoomIdentity);
+    geographicVisible=new Set(rows.map(d=>d.zip));geoFiltered=false;
+    renderAll();
+  }
+  resetFilters.on("click",resetArea);
   // MAP: keep the OpenStreetMap tile layer and vector ZIPs inside the SAME zoom handler.
   const mw = 720, mh = 580;
   const mapSvg = mapViewport.append("svg").attr("viewBox",`0 0 ${mw} ${mh}`).attr("aria-label","Map of Bay Area ZIP codes colored by monthly rent change");
@@ -197,8 +254,21 @@ const neighborhoodDashboard = await (async () => {
   const tileMaker = d3tile().extent([[0,0],[mw,mh]]).tileSize(256);
   const tileUrl = (x,y,z) => `https://tile.openstreetmap.org/${z}/${x}/${y}.png`;
   const mapClipped = mapSvg.append("g").attr("clip-path",`url(#${mapClipID})`);
-  const tileLayer = mapClipped.append("g").style("pointer-events","none");
+  const tileLayer = mapClipped.append("g").attr("class","map-tiles").style("pointer-events","none");
   const geometryLayer = mapClipped.append("g");
+  // Vector labels stay sharp at every zoom and appear ABOVE colored ZIP polygons.
+  const cityLabelLayer = mapClipped.append("g").style("pointer-events","none");
+  const cityLabels = [
+    ["San Francisco",-122.4194,37.7749],["Oakland",-122.2711,37.8044],
+    ["Berkeley",-122.2727,37.8715],["San Jose",-121.8863,37.3382],
+    ["Palo Alto",-122.1430,37.4419],["Fremont",-121.9886,37.5483],
+    ["San Mateo",-122.3255,37.5630],["Richmond",-122.3477,37.9358],
+    ["Walnut Creek",-122.0652,37.9101],["Santa Rosa",-122.7141,38.4404],
+    ["Vallejo",-122.2566,38.1041],["San Rafael",-122.5311,37.9735]
+  ];
+  const cityText=cityLabelLayer.selectAll("text.city-label")
+    .data(cityLabels).join("text").attr("class","city-label")
+    .attr("text-anchor","middle").text(d=>d[0]);
   mapSvg.append("text").attr("class","map-attrib").attr("x",mw-8).attr("y",mh-8).attr("text-anchor","end").text("© OpenStreetMap contributors");
   const geoFeatures = geo.features.filter(f => byZip.has(zipKey(f.properties?.ZIP ?? f.properties?.zip ?? f.properties?.ZCTA5CE20 ?? f.properties?.ZCTA5CE10)));
   const zipPaths = geometryLayer.selectAll("path").data(geoFeatures).join("path")
@@ -217,6 +287,9 @@ const neighborhoodDashboard = await (async () => {
     const transform = ev.transform;
     mapTransform = transform;
     geometryLayer.attr("transform",transform);
+    cityText.attr("x",d=>transform.apply(mapProjection([d[1],d[2]]))[0])
+      .attr("y",d=>transform.apply(mapProjection([d[1],d[2]]))[1])
+      .attr("display",d=>{const q=transform.apply(mapProjection([d[1],d[2]]));return q[0]>=15&&q[0]<=mw-15&&q[1]>=20&&q[1]<=mh-20 && (transform.k>1.45 || ["San Francisco","Oakland","Berkeley","San Jose","Santa Rosa"].includes(d[0])) ? null : "none";});
     const tiles = tileMaker({k:transform.k*worldK,x:transform.x+transform.k*tx,y:transform.y+transform.k*ty});
     tileLayer.selectAll("image").data(tiles,d=>d.join("/")).join("image")
       .attr("href",d=>tileUrl(...d))
@@ -248,7 +321,7 @@ const neighborhoodDashboard = await (async () => {
 
   function drawMap(){
     const vis=new Set(visible().map(d=>d.zip));
-    zipPaths.attr("fill",f=>{const d=byZip.get(zipKey(f.properties?.ZIP??f.properties?.zip??f.properties?.ZCTA5CE20??f.properties?.ZCTA5CE10));return d?.rentChange==null?"#a9a8ad":mapColor(d.rentChange);})
+    zipPaths.attr("fill",f=>{const d=byZip.get(zipKey(f.properties?.ZIP??f.properties?.zip??f.properties?.ZCTA5CE20??f.properties?.ZCTA5CE10));return d?.rentChange==null?"#c8c5cd":mapColor(d.rentChange);})
       .attr("fill-opacity",f=>vis.has(zipKey(f.properties?.ZIP??f.properties?.zip??f.properties?.ZCTA5CE20??f.properties?.ZCTA5CE10)) ? overlayOpacity : 0.08)
       .classed("selected",f=>zipKey(f.properties?.ZIP??f.properties?.zip??f.properties?.ZCTA5CE20??f.properties?.ZCTA5CE10)===selectedZip);
     zipPaths.filter(f=>zipKey(f.properties?.ZIP??f.properties?.zip??f.properties?.ZCTA5CE20??f.properties?.ZCTA5CE10)===selectedZip).raise();
@@ -292,15 +365,24 @@ const neighborhoodDashboard = await (async () => {
     const denom=d3.sum(data,d=>(d.amenities-meanX)**2);
     if(denom>0){const slope=d3.sum(data,d=>(d.amenities-meanX)*(d.rent-meanY))/denom,intercept=meanY-slope*meanX;
       const a=d3.min(data,d=>d.amenities),b=d3.max(data,d=>d.amenities);
-      svg.append("line").attr("x1",x(a)).attr("y1",y(intercept+slope*a)).attr("x2",x(b)).attr("y2",y(intercept+slope*b)).attr("stroke","#e39a65").attr("stroke-width",2).attr("stroke-dasharray","5,4");}
+      svg.append("line").attr("x1",x(a)).attr("y1",y(intercept+slope*a)).attr("x2",x(b)).attr("y2",y(intercept+slope*b)).attr("stroke","#8a5b9c").attr("stroke-width",2).attr("stroke-dasharray","5,4");}
     svg.selectAll("circle.point").data(data,d=>d.zip).join("circle").attr("class","point")
       .attr("cx",d=>x(d.amenities)).attr("cy",d=>y(d.rent)).attr("r",d=>d.zip===selectedZip?7:4)
-      .attr("fill",d=>d.zip===selectedZip?"#7655a9":"#7395bc").attr("fill-opacity",d=>d.zip===selectedZip?1:.57)
-      .attr("stroke",d=>d.zip===selectedZip?"#30223f":"#fff").attr("stroke-width",d=>d.zip===selectedZip?2:0.8)
-      .style("cursor","pointer").on("click",(event,d)=>choose(d.zip))
-      .append("title").text(d=>`${d.city} (${d.zip})\nRent: ${money(d.rent)}/mo\nAmenities: ${shortNumber(d.amenities)} per sq. mile`);
+      .attr("fill",d=>d.zip===selectedZip?"#762a83":"#519a75").attr("fill-opacity",d=>d.zip===selectedZip?1:.57)
+      .attr("stroke",d=>d.zip===selectedZip?"#3c2045":"#fff").attr("stroke-width",d=>d.zip===selectedZip?2:0.8)
+      .style("cursor","pointer")
+      .on("pointerenter pointermove",(event,d)=>{
+        scatterTip.style("display","block").html(`<strong>${d.city} · ${d.zip}</strong><br>Rent: ${money(d.rent)}/mo<br>Amenities: ${shortNumber(d.amenities)} / sq. mi`);
+        const rect=scatterHolder.node().getBoundingClientRect();
+        const tipWidth=scatterTip.node().offsetWidth||175;
+        const x=Math.max(4,Math.min(event.clientX-rect.left+12,rect.width-tipWidth-4));
+        const y=Math.max(4,event.clientY-rect.top-65);
+        scatterTip.style("left",`${x}px`).style("top",`${y}px`);
+      })
+      .on("pointerleave",()=>scatterTip.style("display","none"))
+      .on("click",(event,d)=>{scatterTip.style("display","none");choose(d.zip);});
     svg.selectAll("circle.point").filter(d=>d.zip===selectedZip).raise();
-    scatterNote.text(`${data.length} ZIP codes in view · dashed orange line represents the local linear trend`);
+    scatterNote.text(`${data.length} ZIP codes in view · dashed purple line shows the fitted trend for this map area`);
   }
   function drawTrends(){
     lineBox.selectAll("*").remove();lineLegend.selectAll("*").remove();
@@ -320,15 +402,17 @@ const neighborhoodDashboard = await (async () => {
     const line=d3.line().defined(v=>Number.isFinite(v.rent)).x(v=>x(v.date)).y(v=>y(v.rent));
     svg.selectAll("path.rent-series").data(series).join("path").attr("class","rent-series")
       .attr("d",s=>line(s.values)).attr("fill","none")
-      .attr("stroke",s=>s.group==="Selected ZIP"?"#7655a9":groupColor.get(s.group))
+      .attr("stroke",s=>s.group==="Selected ZIP"?"#422047":groupColor.get(s.group))
       .attr("stroke-width",s=>s.group==="Selected ZIP"?3.3:2.1)
       .attr("stroke-dasharray",s=>s.group==="Selected ZIP"?"6 4":null);
-    for(const s of series){const item=lineLegend.append("span");item.append("span").attr("class","key-dot").style("background",s.group==="Selected ZIP"?"#7655a9":groupColor.get(s.group));item.append("span").text(s.group);}
+    for(const s of series){const item=lineLegend.append("span");item.append("span").attr("class","key-dot").style("background",s.group==="Selected ZIP"?"#422047":groupColor.get(s.group));item.append("span").text(s.group);}
   }
   function renderAll(){
     const area=visible(),rents=area.filter(d=>d.rent>0);
+    areaLabel.text(county==="All"?"ZIP codes currently visible on the map":`${county} County · visible ZIP codes`);
     countStat.html(`<b>${area.length}</b><span>ZIP codes in view</span>`);
-    rentStat.html(`<b>${money(d3.mean(rents,d=>d.rent))}</b><span>Average monthly rent</span>`);
+    rentStat.html(`<b>${money(d3.mean(rents,d=>d.rent))}</b><span>Area average monthly rent</span>`);
+    amenityStat.html(`<b>${shortNumber(d3.mean(area.filter(d=>d.amenities!==null),d=>d.amenities))}</b><span>Average amenities / sq. mi</span>`);
     const avgAmenities=d3.mean(area.filter(d=>d.amenities!==null),d=>d.amenities);
     contextA.html(`<b>${shortNumber(avgAmenities)}</b><span>Average amenities / sq. mile</span>`);
     contextB.html(`<b>${area.length}</b><span>ZIP codes being compared</span>`);
